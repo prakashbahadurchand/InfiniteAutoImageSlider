@@ -10,13 +10,19 @@ import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import kotlin.math.abs
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), IPageSwitcher {
 
     private lateinit var viewPager2: ViewPager2
     private lateinit var handler: Handler
     private lateinit var adapter: ImageAdapter
     private lateinit var imageList: ArrayList<Int>
-    private val runnable = Runnable { viewPager2.currentItem += 1 }
+    private val runnable = Runnable {
+        if (viewPager2.currentItem == imageList.size - 1) {
+            viewPager2.currentItem = 0
+        } else {
+            viewPager2.currentItem += 1
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,12 +41,12 @@ class MainActivity : AppCompatActivity() {
         imageList.add(R.drawable.three)
         imageList.add(R.drawable.four)
         imageList.add(R.drawable.five)
-        imageList.add(R.drawable.six)
-        imageList.add(R.drawable.seven)
-        imageList.add(R.drawable.eight)
+        //imageList.add(R.drawable.six)
+        //imageList.add(R.drawable.seven)
+        //imageList.add(R.drawable.eight)
 
 
-        adapter = ImageAdapter(imageList, viewPager2)
+        adapter = ImageAdapter(imageList, this)
         viewPager2.adapter = adapter
         viewPager2.offscreenPageLimit = 3
         viewPager2.clipToPadding = false
@@ -57,13 +63,13 @@ class MainActivity : AppCompatActivity() {
         viewPager2.setPageTransformer(transformer)
 
         // Listener
-        viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        /*viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 handler.removeCallbacks(runnable)
                 handler.postDelayed(runnable, 5000)
             }
-        })
+        })*/
     }
 
     override fun onPause() {
@@ -73,7 +79,28 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        handler.postDelayed(runnable, 5000)
+        handler.postDelayed(runnable, 3000)
+    }
+
+    override fun switchPage(type: CarouselType, delay: Long) {
+        when (type) {
+            CarouselType.CITIZEN_CHARTER -> {
+                handler.removeCallbacks(runnable)
+                handler.postDelayed(runnable, delay)
+            }
+            CarouselType.MEDIA -> {
+                //handler.removeCallbacks(runnable)
+                //handler.postDelayed(runnable, 5000)
+            }
+            CarouselType.REPRESENTATIVE -> {
+                //handler.removeCallbacks(runnable)
+                //handler.postDelayed(runnable, 5000)
+            }
+            CarouselType.STAFF -> {
+                //handler.removeCallbacks(runnable)
+                //handler.postDelayed(runnable, 5000)
+            }
+        }
     }
 
 }
